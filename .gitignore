@@ -1,0 +1,9 @@
+/.idea
+/target
+*.class
+*.log
+*.iml
+
+# Project exclude paths
+/app/target/
+/model/target/

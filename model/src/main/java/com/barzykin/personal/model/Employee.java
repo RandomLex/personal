@@ -2,7 +2,9 @@ package com.barzykin.personal.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -12,9 +14,11 @@ import java.util.List;
  * POJO (Plain Old Java Object (Простой старый джава-объект))
  */
 @Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Employee {
+public class Employee extends AbstractEntity {
     private String name;
     private int age;
     private Title title;

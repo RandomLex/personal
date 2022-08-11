@@ -39,7 +39,7 @@ public class RepositoryFactory {
         }
     }
 
-    public RepositoryFactory() {
+    private RepositoryFactory() {
         // preventing instance
     }
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -15,8 +16,8 @@ public class EmployeeRepositoryInMemory implements EmployeeRepository {
     private Map<Long, Employee> map = new ConcurrentHashMap<>();
 
     private EmployeeRepositoryInMemory() {
-        map.put(1L, new Employee("Alex", 45, null, List.of(), 1000));
-        map.put(2L, new Employee("Viktor", 34, null, List.of(), 900));
+        map.put(1L, new Employee("Alex", 45, null, Set.of(), 1000));
+        map.put(2L, new Employee("Viktor", 34, null, Set.of(), 900));
     }
 
     public static EmployeeRepositoryInMemory getInstance() {

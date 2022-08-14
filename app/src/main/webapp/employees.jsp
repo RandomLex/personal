@@ -13,17 +13,19 @@
 
 <table>
     <tr>
-        <th>Имя</th><th>Возраст</th><th>Зарплата</th><th>Должность</th>
+        <th>Имя</th><th>Возраст</th><th>Зарплата</th><th>Должность</th><th>Отдел (Город)</th>
     </tr>
 
     <c:forEach items="${requestScope.employees}" var="employee">
-<%--        <c:set var="title" value="${employee.title}" scope="page"/>  --%>
         <tr>
             <td>${employee.name}</td>
             <td>${employee.age}</td>
             <td>${employee.salary}</td>
             <td>${empty employee.title ? '----' : employee.title.name}</td>
-<%--            <td><c:out value="${empty employee.title ? '----' : employee.title.name}" /></td>--%>
+            <c:set value="${employee.divisions}" scope="page" var="divisions"/>
+            <c:forEach items="${divisions}" var="division">
+                <td><c:out value=" ${empty division ? '----' : division.name} (${(division.city.name)})"/></td>
+            </c:forEach>
         </tr>
     </c:forEach>
 

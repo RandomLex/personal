@@ -6,7 +6,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * JavaBean
@@ -22,7 +25,7 @@ public class Employee extends AbstractEntity {
     private String name;
     private int age;
     private Title title;
-    private List<Division> divisions;
+    private Set<Division> divisions = new HashSet<>();
     private int salary;
 
     public Employee withId(Long id) {
@@ -40,8 +43,13 @@ public class Employee extends AbstractEntity {
         return this;
     }
 
-    public Employee withDivisions(List<Division> divisions) {
+    public Employee withDivisions(Set<Division> divisions) {
         this.divisions = divisions;
+        return this;
+    }
+
+    public Employee addDivision(Division division) {
+        this.divisions.add(division);
         return this;
     }
 

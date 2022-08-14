@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public class Employee extends AbstractEntity {
     private String name;
     private int age;
     private Title title;
-    private List<Division> divisions;
+    private List<Division> divisions = new ArrayList<>();
     private int salary;
 
     public Employee withId(Long id) {
@@ -42,6 +43,11 @@ public class Employee extends AbstractEntity {
 
     public Employee withDivisions(List<Division> divisions) {
         this.divisions = divisions;
+        return this;
+    }
+
+    public Employee addDivision(Division division) {
+        this.divisions.add(division);
         return this;
     }
 

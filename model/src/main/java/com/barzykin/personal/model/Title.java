@@ -13,4 +13,14 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class Title extends AbstractEntity {
     private String name;
+
+    public Title withId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Title withName(String name) {
+        this.name = name;
+        return this;
+    }
 }

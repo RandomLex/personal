@@ -16,4 +16,14 @@ import java.util.List;
 public class City extends AbstractEntity {
     private String name;
     private List<Division> divisions;
+
+    public City withId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public City withName(String name) {
+        this.name = name;
+        return this;
+    }
 }

@@ -25,4 +25,34 @@ public class Employee extends AbstractEntity {
     private List<Division> divisions;
     private int salary;
 
+    public Employee withId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Employee withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Employee withAge(int age) {
+        this.age = age;
+        return this;
+    }
+
+    public Employee withDivisions(List<Division> divisions) {
+        this.divisions = divisions;
+        return this;
+    }
+
+    public Employee withSalary(int salary) {
+        this.salary = salary;
+        return this;
+    }
+
+    public Employee withTitle(Title title) {
+        this.title = title;
+        return this;
+    }
+
 }

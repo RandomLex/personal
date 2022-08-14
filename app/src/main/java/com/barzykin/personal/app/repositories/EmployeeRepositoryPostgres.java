@@ -3,6 +3,7 @@ package com.barzykin.personal.app.repositories;
 import com.barzykin.personal.app.constants.DbConstants;
 import com.barzykin.personal.app.exception.ApplicationException;
 import com.barzykin.personal.model.Employee;
+import com.barzykin.personal.model.Title;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.barzykin.personal.app.constants.DbConstants.*;
+import static com.barzykin.personal.app.constants.DbConstants.AGE;
 import static com.barzykin.personal.app.constants.DbConstants.ID;
+import static com.barzykin.personal.app.constants.DbConstants.NAME;
+import static com.barzykin.personal.app.constants.DbConstants.SALARY;
+import static com.barzykin.personal.app.constants.DbConstants.T_ID;
 
 public class EmployeeRepositoryPostgres implements EmployeeRepository {
 
@@ -41,16 +46,22 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
     public List<Employee> findAll() {
         List<Employee> result = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement("select * from employee");
+             PreparedStatement ps = connection.prepareStatement(
+                     "select e.id id, e.name, e.age age, t.id t_id, t.name title, e.salary salary " +
+                             "from employee e " +
+                             "join title t on e.title_id = t.id"
+             );
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Employee employee = new Employee();
-                employee.setId(rs.getLong(ID));
-                employee.setAge(rs.getInt(AGE));
-                employee.setName(rs.getString(NAME));
-                employee.setSalary(rs.getInt(SALARY));
-                result.add(employee);
+                result.add(new Employee()
+                        .withId(rs.getLong(ID))
+                        .withName(rs.getString(NAME))
+                        .withAge(rs.getInt(AGE))
+                        .withTitle(new Title()
+                                .withId(rs.getLong(T_ID))
+                                .withName(rs.getString(TITLE)))
+                        .withSalary(rs.getInt(SALARY)));
             }
 
         } catch (SQLException e) {

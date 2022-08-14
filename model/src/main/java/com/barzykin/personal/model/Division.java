@@ -16,4 +16,19 @@ import java.util.List;
 public class Division extends AbstractEntity {
     private String name;
     private List<Employee> employees;
+
+    public Division withId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Division withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Division withEmployees(List<Employee> employees) {
+        this.employees = employees;
+        return this;
+    }
 }

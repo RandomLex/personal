@@ -6,6 +6,7 @@
 <html lang="ru">
 <head>
     <title>Employees</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>

@@ -1,6 +1,8 @@
 package com.barzykin.personal.app.constants;
 
 public final class DbConstants {
+
+    public static final String ID = "id";
     public static final String E_ID = "e_id";
     public static final String E_NAME = "e_name";
     public static final String SALARY = "salary";

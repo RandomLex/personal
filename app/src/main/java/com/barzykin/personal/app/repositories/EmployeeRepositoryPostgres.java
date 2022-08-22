@@ -16,12 +16,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.barzykin.personal.app.constants.DbConstants.*;
 import static com.barzykin.personal.app.constants.DbConstants.AGE;
+import static com.barzykin.personal.app.constants.DbConstants.C_ID;
+import static com.barzykin.personal.app.constants.DbConstants.C_NAME;
+import static com.barzykin.personal.app.constants.DbConstants.D_ID;
+import static com.barzykin.personal.app.constants.DbConstants.D_NAME;
 import static com.barzykin.personal.app.constants.DbConstants.E_ID;
 import static com.barzykin.personal.app.constants.DbConstants.E_NAME;
+import static com.barzykin.personal.app.constants.DbConstants.ID;
 import static com.barzykin.personal.app.constants.DbConstants.SALARY;
 import static com.barzykin.personal.app.constants.DbConstants.T_ID;
+import static com.barzykin.personal.app.constants.DbConstants.T_NAME;
 
 public class EmployeeRepositoryPostgres implements EmployeeRepository {
 
@@ -113,7 +118,44 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
 
     @Override
     public Employee save(Employee employee) {
-        return null;
+        return employee.getId() == null ? insert(employee) : update(employee);
+    }
+
+    private Employee insert(Employee employee) {
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(
+                     "insert into employee (name, age, salary)" +
+                             " values (?, ?, ?) returning id")) {
+            ps.setString(1, employee.getName());
+            ps.setInt(2, employee.getAge());
+            ps.setInt(3, employee.getSalary());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                employee.setId(rs.getLong(ID));
+            }
+        } catch (SQLException e) {
+            throw new ApplicationException(e);
+        }
+        return employee;
+    }
+
+    private Employee update(Employee employee) {
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(
+                     "update employee set name = ?, age = ?, salary = ? where id = ?")) {
+            ps.setString(1, employee.getName());
+            ps.setInt(2, employee.getAge());
+            ps.setInt(3, employee.getSalary());
+            ps.setLong(4, employee.getId());
+
+            if (ps.executeUpdate() > 0) {
+                return employee;
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new ApplicationException(e);
+        }
     }
 
     @Override

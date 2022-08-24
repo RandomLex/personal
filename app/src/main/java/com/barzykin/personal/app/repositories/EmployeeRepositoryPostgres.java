@@ -6,7 +6,6 @@ import com.barzykin.personal.model.Division;
 import com.barzykin.personal.model.Employee;
 import com.barzykin.personal.model.Title;
 
-import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,7 +29,6 @@ import static com.barzykin.personal.app.constants.DbConstants.T_ID;
 import static com.barzykin.personal.app.constants.DbConstants.T_NAME;
 
 public class EmployeeRepositoryPostgres implements EmployeeRepository {
-
     private static final String SELECT_ALL_FROM_EMPLOYEES = "select" +
             " e.id e_id, e.name e_name, salary, age," +
             " d.id d_id, d.name d_name," +
@@ -41,11 +39,9 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
             " left join department_employee de on e.id = de.employee_id" +
             " left join department d on d.id = de.department_id" +
             " left join city c on d.city_id = c.id";
-
-    private static final String WITH_ID = " where e.id = ?";
-
-    private static final String SELECT_EMPLOYEE_BY_ID =
-            SELECT_ALL_FROM_EMPLOYEES + WITH_ID;
+    private static final String UPDATE_EMPLOYEE = "update employee e set name = ?, age = ?, salary = ?";
+    private static final String DELETE_FROM_EMPLOYEE = "delete from employee e";
+    private static final String FILTER_BY_ID = " where e.id = ?";
     private final RepositoryDataSource dataSource;
 
     private static volatile EmployeeRepositoryPostgres instance;
@@ -85,7 +81,8 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
         Map<Long, Employee> employeeMap;
         ResultSet rs = null;
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(SELECT_EMPLOYEE_BY_ID)) {
+             PreparedStatement ps = connection.prepareStatement(
+                     SELECT_ALL_FROM_EMPLOYEES + FILTER_BY_ID)) {
             ps.setLong(1, id);
             rs = ps.executeQuery();
             employeeMap = resultSetToEmployees(rs);
@@ -182,7 +179,7 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
     private Employee update(Employee employee) {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(
-                     "update employee set name = ?, age = ?, salary = ? where id = ?")) {
+                     UPDATE_EMPLOYEE + FILTER_BY_ID)) {
             ps.setString(1, employee.getName());
             ps.setInt(2, employee.getAge());
             ps.setInt(3, employee.getSalary());
@@ -200,6 +197,21 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
 
     @Override
     public Optional<Employee> remove(long id) {
-        return Optional.empty();
+        Optional<Employee> optionalEmployee = find(id);
+        if (optionalEmployee.isEmpty()) {
+            return Optional.empty();
+        }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(DELETE_FROM_EMPLOYEE + FILTER_BY_ID)) {
+            ps.setLong(1, id);
+            if (ps.executeUpdate() > 0) {
+                return optionalEmployee;
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new ApplicationException(e);
+        }
+
     }
 }

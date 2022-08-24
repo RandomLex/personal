@@ -83,4 +83,30 @@ public class EmployeeRestController extends HttpServlet {
         writer.print(employeeAsJson);
         writer.flush();
     }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding(ENCODING);
+        resp.setCharacterEncoding(ENCODING);
+        resp.setContentType(CONTENT_TYPE);
+        String idAsString = req.getParameter(ID);
+        if (idAsString == null) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        Optional<Employee> deletedEmployee = employeeRepository.remove(Long.parseLong(idAsString));
+        if (deletedEmployee.isEmpty()) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(deletedEmployee.get());
+        req.setCharacterEncoding(ENCODING);
+        resp.setCharacterEncoding(ENCODING);
+        resp.setContentType(CONTENT_TYPE);
+        PrintWriter writer = resp.getWriter();
+        writer.print(json);
+        writer.flush();
+    }
 }

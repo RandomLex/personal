@@ -36,10 +36,10 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
             " c.id c_id, c.name c_name," +
             " t.id t_id, t.name t_name" +
             " from employee e" +
-            " join title t on e.title_id = t.id" +
-            " join department_employee de on e.id = de.employee_id" +
-            " join department d on d.id = de.department_id" +
-            " join city c on d.city_id = c.id";
+            " left join title t on e.title_id = t.id" +
+            " left join department_employee de on e.id = de.employee_id" +
+            " left join department d on d.id = de.department_id" +
+            " left join city c on d.city_id = c.id";
     private final RepositoryDataSource dataSource;
 
     private static volatile EmployeeRepositoryPostgres instance;
@@ -76,18 +76,25 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
                 Long tId = rs.getLong(T_ID);
                 Long cId = rs.getLong(C_ID);
 
-                titleMap.putIfAbsent(tId, new Title()
-                        .withId(tId)
-                        .withName(rs.getString(T_NAME)));
+                if (tId != 0) {
+                    titleMap.putIfAbsent(tId, new Title()
+                            .withId(tId)
+                            .withName(rs.getString(T_NAME)));
+                }
 
-                cityMap.putIfAbsent(cId, new City()
-                        .withId(cId)
-                        .withName(rs.getString(C_NAME)));
+                if (cId != 0) {
+                    cityMap.putIfAbsent(cId, new City()
+                            .withId(cId)
+                            .withName(rs.getString(C_NAME)));
+                }
 
-                divisionMap.putIfAbsent(dId, new Division()
-                        .withId(dId)
-                        .withName(rs.getString(D_NAME))
-                        .withCity(cityMap.get(cId)));
+                if (dId != 0) {
+                    divisionMap.putIfAbsent(dId, new Division()
+                            .withId(dId)
+                            .withName(rs.getString(D_NAME))
+                            .withCity(cityMap.get(cId)));
+                }
+
 
                 employeeMap.putIfAbsent(eId, new Employee()
                         .withId(eId)

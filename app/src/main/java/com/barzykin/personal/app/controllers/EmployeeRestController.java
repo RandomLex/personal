@@ -1,6 +1,5 @@
 package com.barzykin.personal.app.controllers;
 
-import com.barzykin.personal.app.constants.HttpConstants;
 import com.barzykin.personal.app.repositories.EmployeeRepository;
 import com.barzykin.personal.app.repositories.RepositoryFactory;
 import com.barzykin.personal.model.Employee;

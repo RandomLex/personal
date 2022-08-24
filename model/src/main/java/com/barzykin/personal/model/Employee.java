@@ -49,7 +49,9 @@ public class Employee extends AbstractEntity {
     }
 
     public Employee addDivision(Division division) {
-        this.divisions.add(division);
+        if (division != null) {
+            this.divisions.add(division);
+        }
         return this;
     }
 

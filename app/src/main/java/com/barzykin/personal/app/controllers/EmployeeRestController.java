@@ -14,8 +14,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.barzykin.personal.app.constants.DbConstants.ID;
 import static com.barzykin.personal.app.constants.HttpConstants.CONTENT_TYPE;
 import static com.barzykin.personal.app.constants.HttpConstants.ENCODING;
 
@@ -26,9 +28,22 @@ public class EmployeeRestController extends HttpServlet {
     private EmployeeRepository employeeRepository = RepositoryFactory.getEmployeeRepository();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Employee> employees = employeeRepository.findAll();
+        Object result;
+        String id = req.getParameter(ID);
+        if (id == null) {
+            result = employeeRepository.findAll();
+        } else {
+            Optional<Employee> optionalEmployee = employeeRepository.find(Long.parseLong(id));
+            if (optionalEmployee.isPresent()) {
+                result = optionalEmployee.get();
+            } else {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+        }
+
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(employees);
+        String json = mapper.writeValueAsString(result);
         req.setCharacterEncoding(ENCODING);
         resp.setCharacterEncoding(ENCODING);
         resp.setContentType(CONTENT_TYPE);

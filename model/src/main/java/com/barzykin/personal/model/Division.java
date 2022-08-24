@@ -37,4 +37,11 @@ public class Division extends AbstractEntity {
         this.employees = employees;
         return this;
     }
+
+    public Division addEmployee(Employee employee) {
+        if (employee != null) {
+            this.employees.add(employee);
+        }
+        return this;
+    }
 }

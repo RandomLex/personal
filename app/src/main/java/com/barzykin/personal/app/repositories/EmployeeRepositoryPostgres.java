@@ -6,6 +6,7 @@ import com.barzykin.personal.model.Division;
 import com.barzykin.personal.model.Employee;
 import com.barzykin.personal.model.Title;
 
+import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,6 +41,11 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
             " left join department_employee de on e.id = de.employee_id" +
             " left join department d on d.id = de.department_id" +
             " left join city c on d.city_id = c.id";
+
+    private static final String WITH_ID = " where e.id = ?";
+
+    private static final String SELECT_EMPLOYEE_BY_ID =
+            SELECT_ALL_FROM_EMPLOYEES + WITH_ID;
     private final RepositoryDataSource dataSource;
 
     private static volatile EmployeeRepositoryPostgres instance;
@@ -62,60 +68,87 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
 
     @Override
     public List<Employee> findAll() {
-        Map<Long, Employee> employeeMap = new HashMap<>();
+        Map<Long, Employee> employeeMap;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement ps = connection.prepareStatement(SELECT_ALL_FROM_EMPLOYEES);
              ResultSet rs = ps.executeQuery()) {
-            Map<Long, Division> divisionMap = new HashMap<>();
-            Map<Long, City> cityMap = new HashMap<>();
-            Map<Long, Title> titleMap = new HashMap<>();
-
-            while (rs.next()) {
-                Long eId = rs.getLong(E_ID);
-                Long dId = rs.getLong(D_ID);
-                Long tId = rs.getLong(T_ID);
-                Long cId = rs.getLong(C_ID);
-
-                if (tId != 0) {
-                    titleMap.putIfAbsent(tId, new Title()
-                            .withId(tId)
-                            .withName(rs.getString(T_NAME)));
-                }
-
-                if (cId != 0) {
-                    cityMap.putIfAbsent(cId, new City()
-                            .withId(cId)
-                            .withName(rs.getString(C_NAME)));
-                }
-
-                if (dId != 0) {
-                    divisionMap.putIfAbsent(dId, new Division()
-                            .withId(dId)
-                            .withName(rs.getString(D_NAME))
-                            .withCity(cityMap.get(cId)));
-                }
-
-
-                employeeMap.putIfAbsent(eId, new Employee()
-                        .withId(eId)
-                        .withName(rs.getString(E_NAME))
-                        .withSalary(rs.getInt(SALARY))
-                        .withAge(rs.getInt(AGE))
-                        .withTitle(titleMap.get(tId))
-                        .addDivision(divisionMap.get(dId)));
-
-                employeeMap.computeIfPresent(eId, (id, emp) -> emp.addDivision(divisionMap.get(dId)));
-            }
-
+            employeeMap = resultSetToEmployees(rs);
         } catch (SQLException e) {
             throw new ApplicationException(e);
         }
         return new ArrayList<>(employeeMap.values());
     }
 
+
     @Override
     public Optional<Employee> find(long id) {
-        return Optional.empty();
+        Map<Long, Employee> employeeMap;
+        ResultSet rs = null;
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(SELECT_EMPLOYEE_BY_ID)) {
+            ps.setLong(1, id);
+            rs = ps.executeQuery();
+            employeeMap = resultSetToEmployees(rs);
+        } catch (SQLException e) {
+            throw new ApplicationException(e);
+        } finally {
+            quietClose(rs);
+        }
+        return employeeMap.values().stream().findAny();
+    }
+
+    private static void quietClose(AutoCloseable rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (Exception e) {
+                // Nothing to do
+            }
+        }
+    }
+
+    private Map<Long, Employee> resultSetToEmployees(ResultSet rs) throws SQLException {
+        Map<Long, Employee> employeeMap = new HashMap<>();
+        Map<Long, Division> divisionMap = new HashMap<>();
+        Map<Long, City> cityMap = new HashMap<>();
+        Map<Long, Title> titleMap = new HashMap<>();
+
+        while (rs.next()) {
+            Long eId = rs.getLong(E_ID);
+            Long dId = rs.getLong(D_ID);
+            Long tId = rs.getLong(T_ID);
+            Long cId = rs.getLong(C_ID);
+
+            if (tId != 0) {
+                titleMap.putIfAbsent(tId, new Title()
+                        .withId(tId)
+                        .withName(rs.getString(T_NAME)));
+            }
+
+            if (cId != 0) {
+                cityMap.putIfAbsent(cId, new City()
+                        .withId(cId)
+                        .withName(rs.getString(C_NAME)));
+            }
+
+            if (dId != 0) {
+                divisionMap.putIfAbsent(dId, new Division()
+                        .withId(dId)
+                        .withName(rs.getString(D_NAME))
+                        .withCity(cityMap.get(cId)));
+            }
+
+            employeeMap.putIfAbsent(eId, new Employee()
+                    .withId(eId)
+                    .withName(rs.getString(E_NAME))
+                    .withSalary(rs.getInt(SALARY))
+                    .withAge(rs.getInt(AGE))
+                    .withTitle(titleMap.get(tId))
+                    .addDivision(divisionMap.get(dId)));
+
+            employeeMap.computeIfPresent(eId, (id, emp) -> emp.addDivision(divisionMap.get(dId)));
+        }
+        return employeeMap;
     }
 
     @Override

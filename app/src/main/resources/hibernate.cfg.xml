@@ -16,6 +16,7 @@
 
         <mapping resource="City.hbm.xml"/>
         <mapping resource="Employee.hbm.xml"/>
+        <mapping resource="Title.hbm.xml"/>
 
 
     </session-factory>

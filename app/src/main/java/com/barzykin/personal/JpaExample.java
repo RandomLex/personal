@@ -43,7 +43,7 @@ public class JpaExample {
         City city = em.find(City.class, 2L);
         System.out.println("!!! " + city);
 
-        Employee employee = em.find(Employee.class, 1L);
+        Employee employee = em.find(Employee.class, 11L);
         System.out.println("!!! " + employee);
 
         TypedQuery<Employee> query = em.createQuery("from Employee ", Employee.class);

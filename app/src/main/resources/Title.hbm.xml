@@ -4,16 +4,11 @@
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="com.barzykin.personal.model.Employee" table="employee">
+    <class name="com.barzykin.personal.model.Title" table="title">
         <id name="id" type="java.lang.Long">
             <column name="id"/>
             <generator class="identity"/>
         </id>
         <property name="name" column="name"/>
-        <property name="age" column="age"/>
-        <property name="salary" column="salary"/>
-
-        <one-to-one name="title" class="com.barzykin.personal.model.Title"/>
-
     </class>
 </hibernate-mapping>

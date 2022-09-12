@@ -54,4 +54,15 @@ public class RepositoryFactory {
         }
     }
 
+    public static CityRepositoryPostgres getCityRepository() {
+        switch (TYPE) {
+
+            case POSTGRES:
+                return CityRepositoryPostgres.getInstance(dataSource);
+            case MEMORY:
+                default:
+                throw new ApplicationException("Property should be MEMORY or POSTGRES");
+        }
+    }
+
 }

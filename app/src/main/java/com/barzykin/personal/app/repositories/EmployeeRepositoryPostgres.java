@@ -10,9 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,12 +21,11 @@ import static com.barzykin.personal.app.constants.DbConstants.D_ID;
 import static com.barzykin.personal.app.constants.DbConstants.D_NAME;
 import static com.barzykin.personal.app.constants.DbConstants.E_ID;
 import static com.barzykin.personal.app.constants.DbConstants.E_NAME;
-import static com.barzykin.personal.app.constants.DbConstants.ID;
 import static com.barzykin.personal.app.constants.DbConstants.SALARY;
 import static com.barzykin.personal.app.constants.DbConstants.T_ID;
 import static com.barzykin.personal.app.constants.DbConstants.T_NAME;
 
-public class EmployeeRepositoryPostgres implements EmployeeRepository {
+public class EmployeeRepositoryPostgres extends AbstractRepository<Employee> implements EmployeeRepository {
     private static final String SELECT_ALL_FROM_EMPLOYEES = "select" +
             " e.id e_id, e.name e_name, salary, age," +
             " d.id d_id, d.name d_name," +
@@ -39,11 +36,12 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
             " left join department_employee de on e.id = de.employee_id" +
             " left join department d on d.id = de.department_id" +
             " left join city c on d.city_id = c.id";
+
     private static final String INSERT_EMPLOYEE = "insert into employee (name, age, salary) values (?, ?, ?) returning id";
     private static final String UPDATE_EMPLOYEE = "update employee e set name = ?, age = ?, salary = ?";
     private static final String DELETE_FROM_EMPLOYEE = "delete from employee e";
     private static final String FILTER_BY_ID = " where e.id = ?";
-    private final RepositoryDataSource dataSource;
+
 
     private static volatile EmployeeRepositoryPostgres instance;
 
@@ -64,48 +62,47 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
     }
 
     @Override
-    public List<Employee> findAll() {
-        Map<Long, Employee> employeeMap;
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(SELECT_ALL_FROM_EMPLOYEES);
-             ResultSet rs = ps.executeQuery()) {
-            employeeMap = resultSetToEmployees(rs);
-        } catch (SQLException e) {
-            throw new ApplicationException(e);
-        }
-        return new ArrayList<>(employeeMap.values());
+    protected String selectAllRows() {
+        return SELECT_ALL_FROM_EMPLOYEES;
     }
-
 
     @Override
-    public Optional<Employee> find(long id) {
-        Map<Long, Employee> employeeMap;
-        ResultSet rs = null;
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(
-                     SELECT_ALL_FROM_EMPLOYEES + FILTER_BY_ID)) {
-            ps.setLong(1, id);
-            rs = ps.executeQuery();
-            employeeMap = resultSetToEmployees(rs);
-        } catch (SQLException e) {
-            throw new ApplicationException(e);
-        } finally {
-            quietClose(rs);
-        }
-        return employeeMap.values().stream().findAny();
+    protected String selectRowForId() {
+        return SELECT_ALL_FROM_EMPLOYEES + FILTER_BY_ID;
     }
 
-    private static void quietClose(AutoCloseable rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (Exception e) {
-                // Nothing to do
-            }
-        }
+    @Override
+    protected String insertRow() {
+        return INSERT_EMPLOYEE;
     }
 
-    private Map<Long, Employee> resultSetToEmployees(ResultSet rs) throws SQLException {
+    @Override
+    protected String updateRow() {
+        return UPDATE_EMPLOYEE + FILTER_BY_ID;
+    }
+
+    @Override
+    protected String deleteRow() {
+        return DELETE_FROM_EMPLOYEE + FILTER_BY_ID;
+    }
+
+    @Override
+    protected void setParametersForInsertSql(Employee model, PreparedStatement ps) throws SQLException {
+        ps.setString(1, model.getName());
+        ps.setInt(2, model.getAge());
+        ps.setInt(3, model.getSalary());
+    }
+
+    @Override
+    protected void setParametersForUpdateSql(Employee model, PreparedStatement ps) throws SQLException {
+        ps.setString(1, model.getName());
+        ps.setInt(2, model.getAge());
+        ps.setInt(3, model.getSalary());
+        ps.setLong(4, model.getId());
+    }
+
+    @Override
+    protected Map<Long, Employee> resultSetToModel(ResultSet rs)  throws SQLException {
         Map<Long, Employee> employeeMap = new HashMap<>();
         Map<Long, Division> divisionMap = new HashMap<>();
         Map<Long, City> cityMap = new HashMap<>();
@@ -147,6 +144,7 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
             employeeMap.computeIfPresent(eId, (id, emp) -> emp.addDivision(divisionMap.get(dId)));
         }
         return employeeMap;
+
     }
 
     @Override
@@ -154,64 +152,4 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
         return Optional.empty();
     }
 
-    @Override
-    public Employee save(Employee employee) {
-        return employee.getId() == null ? insert(employee) : update(employee);
-    }
-
-    private Employee insert(Employee employee) {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(
-                     INSERT_EMPLOYEE)) {
-            ps.setString(1, employee.getName());
-            ps.setInt(2, employee.getAge());
-            ps.setInt(3, employee.getSalary());
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                employee.setId(rs.getLong(ID));
-            }
-        } catch (SQLException e) {
-            throw new ApplicationException(e);
-        }
-        return employee;
-    }
-
-    private Employee update(Employee employee) {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(
-                     UPDATE_EMPLOYEE + FILTER_BY_ID)) {
-            ps.setString(1, employee.getName());
-            ps.setInt(2, employee.getAge());
-            ps.setInt(3, employee.getSalary());
-            ps.setLong(4, employee.getId());
-
-            if (ps.executeUpdate() > 0) {
-                return employee;
-            } else {
-                return null;
-            }
-        } catch (SQLException e) {
-            throw new ApplicationException(e);
-        }
-    }
-
-    @Override
-    public Optional<Employee> remove(long id) {
-        Optional<Employee> optionalEmployee = find(id);
-        if (optionalEmployee.isEmpty()) {
-            return Optional.empty();
-        }
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(DELETE_FROM_EMPLOYEE + FILTER_BY_ID)) {
-            ps.setLong(1, id);
-            if (ps.executeUpdate() > 0) {
-                return optionalEmployee;
-            } else {
-                return Optional.empty();
-            }
-        } catch (SQLException e) {
-            throw new ApplicationException(e);
-        }
-
-    }
 }

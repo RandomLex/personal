@@ -10,7 +10,7 @@ public interface Repository<T> {
 
     Optional<T> findByName(String name);
 
-    T save(T employee);
+    T save(T t);
 
     Optional<T> remove(long id);
 }

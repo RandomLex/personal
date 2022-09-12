@@ -39,6 +39,7 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
             " left join department_employee de on e.id = de.employee_id" +
             " left join department d on d.id = de.department_id" +
             " left join city c on d.city_id = c.id";
+    private static final String INSERT_EMPLOYEE = "insert into employee (name, age, salary) values (?, ?, ?) returning id";
     private static final String UPDATE_EMPLOYEE = "update employee e set name = ?, age = ?, salary = ?";
     private static final String DELETE_FROM_EMPLOYEE = "delete from employee e";
     private static final String FILTER_BY_ID = " where e.id = ?";
@@ -161,8 +162,7 @@ public class EmployeeRepositoryPostgres implements EmployeeRepository {
     private Employee insert(Employee employee) {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(
-                     "insert into employee (name, age, salary)" +
-                             " values (?, ?, ?) returning id")) {
+                     INSERT_EMPLOYEE)) {
             ps.setString(1, employee.getName());
             ps.setInt(2, employee.getAge());
             ps.setInt(3, employee.getSalary());

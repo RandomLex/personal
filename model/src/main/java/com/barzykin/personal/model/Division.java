@@ -6,16 +6,17 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true, exclude = "employees")
+@EqualsAndHashCode(callSuper = true, exclude = "employees")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Division extends AbstractEntity {
     private String name;
-    private List<Employee> employees;
+    private Set<Employee> employees;
+
     private City city;
 
     public Division withId(Long id) {
@@ -33,7 +34,7 @@ public class Division extends AbstractEntity {
         return this;
     }
 
-    public Division withEmployees(List<Employee> employees) {
+    public Division withEmployees(Set<Employee> employees) {
         this.employees = employees;
         return this;
     }

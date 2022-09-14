@@ -10,5 +10,11 @@
             <generator class="identity"/>
         </id>
         <property name="name" column="name"/>
+
+        <set name="divisions" inverse="true">
+            <key column="city_id"/>
+            <one-to-many class="com.barzykin.personal.model.Division"/>
+        </set>
+
     </class>
 </hibernate-mapping>

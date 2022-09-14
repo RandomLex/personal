@@ -7,15 +7,16 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true, exclude = "divisions")
+@EqualsAndHashCode(callSuper = true, exclude = "divisions")
 @NoArgsConstructor
 @AllArgsConstructor
 public class City extends AbstractEntity {
     private String name;
-    private List<Division> divisions;
+    private Set<Division> divisions;
 
     public City withId(Long id) {
         this.id = id;

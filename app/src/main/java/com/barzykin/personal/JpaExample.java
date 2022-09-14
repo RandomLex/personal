@@ -34,12 +34,12 @@ public class JpaExample {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
 
-        City city = em.find(City.class, 2L);
-        System.out.println("!!! " + city);
+//        City city = em.find(City.class, 3L);
+//        System.out.println("!!! " + city);
 
-        Employee employee = em.find(Employee.class, 11L);
-        System.out.println("!!! " + employee);
-
+//        Employee employee = em.find(Employee.class, 11L);
+//        System.out.println("!!! " + employee);
+//
         TypedQuery<Employee> query = em.createQuery("from Employee ", Employee.class);
         List<Employee> employees = query.getResultList();
         System.out.println("---------");

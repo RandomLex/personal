@@ -1,11 +1,8 @@
 package com.barzykin.personal;
 
+import com.barzykin.personal.app.repositories.helpers.EntityManagerHelper;
 import com.barzykin.personal.model.City;
 import com.barzykin.personal.model.Employee;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -14,10 +11,8 @@ import java.util.List;
 
 public class JpaExample {
     public static void main(String[] args) {
-        Configuration cfg = new Configuration().configure();
 
-        SessionFactory sessionFactory = cfg.buildSessionFactory();
-
+        EntityManager em = EntityManagerHelper.getInstance().getEntityManager();
 
         //Hibernate session style
 
@@ -36,7 +31,6 @@ public class JpaExample {
 
         //JPA style
 
-        EntityManager em = sessionFactory.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         tx.begin();
 
@@ -58,7 +52,6 @@ public class JpaExample {
 
         em.close();
 
-        sessionFactory.close();
 
 
 

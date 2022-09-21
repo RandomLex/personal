@@ -2,9 +2,6 @@ package com.barzykin.personal;
 
 import com.barzykin.demo.Car;
 import com.barzykin.personal.app.repositories.helpers.EntityManagerHelper;
-import com.barzykin.personal.dto.city.CityDto;
-import com.barzykin.personal.dto.city.DivisionDto;
-import com.barzykin.personal.model.City;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -12,8 +9,6 @@ import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.stream.Collectors;
 
 public class JpaExample {
     public static void main(String[] args) {
@@ -60,16 +55,32 @@ public class JpaExample {
 //        Car lada = em.find(Car.class, 2L);
 
 
-// Чтение из базы данных (select), если мы знаем значение какого-то поля, в данном случае model
-        TypedQuery<Car> queryBmw = em.createQuery("select car from Car car where car.model='BMW'", Car.class);
-        Car bmw = queryBmw.getSingleResult();
-        System.out.println(bmw);
+//// Чтение из базы данных (select), если мы знаем значение какого-то поля, в данном случае model
+//        TypedQuery<Car> queryBmw = em.createQuery("select car from Car car where car.model='BMW'", Car.class);
+//        Car bmw = queryBmw.getSingleResult();
+//        System.out.println(bmw);
+//
+//// Обновляем значение даты у BMW и сохраняем результат в базу (update)
+//        bmw.setReleaseDate(Date.from(LocalDate.of(2015, 7, 15).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+//        Car updatedBMW = em.merge(bmw);
+//        System.out.println(bmw);
 
-// Обновляем значение даты у BMW и сохраняем результат в базу (update)
-        bmw.setReleaseDate(Date.from(LocalDate.of(2015, 7, 15).atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        Car updatedBMW = em.merge(bmw);
-        System.out.println(bmw);
+// Удаление автомобиля (сначала создаём, потом комментируем это и потом удаляем)
 
+//        Car reno = Car.builder()
+//                .model("Reno")
+//                .releaseDate(Date.from(LocalDate.of(2015, 7, 15).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+//                .build();
+//
+//        em.persist(reno);
+
+// Чтение Рено
+        TypedQuery<Car> queryReno = em.createQuery("select car from Car car where car.model='Reno'", Car.class);
+        Car reno = queryReno.getSingleResult();
+        System.out.println(reno);
+
+// Удаление заранее прочитанного Рено
+        em.remove(reno);
 
 //        City city = em.find(City.class, 3L);
 //        CityDto cityDto = CityDto.builder()
@@ -94,9 +105,6 @@ public class JpaExample {
         tx.commit();
 
         em.close();
-
-
-
 
 
     }

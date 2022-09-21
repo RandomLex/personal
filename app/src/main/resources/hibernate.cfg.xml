@@ -25,6 +25,9 @@
 <!--        <mapping class="com.barzykin.personal.model.Title"/>-->
 
         <mapping class="com.barzykin.demo.Car"/>
+        <mapping class="com.barzykin.demo.hierarchy.table.Animal"/>
+        <mapping class="com.barzykin.demo.hierarchy.table.Bird"/>
+        <mapping class="com.barzykin.demo.hierarchy.table.Fish"/>
 
 
     </session-factory>

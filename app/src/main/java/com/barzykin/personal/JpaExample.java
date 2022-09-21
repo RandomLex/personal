@@ -1,6 +1,9 @@
 package com.barzykin.personal;
 
 import com.barzykin.demo.Car;
+import com.barzykin.demo.hierarchy.table.Animal;
+import com.barzykin.demo.hierarchy.table.Bird;
+import com.barzykin.demo.hierarchy.table.Fish;
 import com.barzykin.personal.app.repositories.helpers.EntityManagerHelper;
 
 import javax.persistence.EntityManager;
@@ -9,6 +12,7 @@ import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 public class JpaExample {
     public static void main(String[] args) {
@@ -74,13 +78,57 @@ public class JpaExample {
 //
 //        em.persist(reno);
 
-// Чтение Рено
-        TypedQuery<Car> queryReno = em.createQuery("select car from Car car where car.model='Reno'", Car.class);
-        Car reno = queryReno.getSingleResult();
-        System.out.println(reno);
+//// Чтение Рено
+//        TypedQuery<Car> queryReno = em.createQuery("select car from Car car where car.model='Reno'", Car.class);
+//        Car reno = queryReno.getSingleResult();
+//        System.out.println(reno);
+//
+//// Удаление заранее прочитанного Рено
+//        em.remove(reno);
 
-// Удаление заранее прочитанного Рено
-        em.remove(reno);
+// ***************** Иерархии классов
+// Одна таблица  (Single table)
+
+
+// Вставка новых животных
+//        Bird penguin = Bird.builder()
+//                .origin("Penguin")
+//                .flyable(false)
+//                .growing("nested")
+//                .build();
+//
+//        Bird eagle = Bird.builder()
+//                .origin("Eagle")
+//                .flyable(true)
+//                .growing("nested")
+//                .build();
+//
+//        Fish shark = Fish.builder()
+//                .origin("Shark")
+//                .skeleton("Cartilaginous")
+//                .poisoned(false)
+//                .build();
+//
+//        em.persist(penguin);
+//        em.persist(eagle);
+//        em.persist(shark);
+
+        System.out.println("-------Птицы---------");
+        TypedQuery<Bird> birdTypedQuery = em.createQuery("from Bird ", Bird.class);
+        List<Bird> resultList = birdTypedQuery.getResultList();
+        for (Bird bird : resultList) {
+            System.out.println(bird);
+        }
+
+        System.out.println("-------Рыбы---------");
+        TypedQuery<Fish> fishTypedQuery = em.createQuery("from Fish ", Fish.class);
+        fishTypedQuery.getResultList()
+                .forEach(System.out::println);
+
+        System.out.println("-------Все животные---------");
+        TypedQuery<Animal> animalTypedQuery = em.createQuery("from Animal ", Animal.class);
+        animalTypedQuery.getResultStream()
+                .forEach(animal -> System.out.println(animal));
 
 //        City city = em.find(City.class, 3L);
 //        CityDto cityDto = CityDto.builder()

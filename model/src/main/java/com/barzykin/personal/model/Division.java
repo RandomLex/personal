@@ -6,6 +6,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.util.Set;
 
 @Data
@@ -13,10 +19,14 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true, exclude = "employees")
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "department")
 public class Division extends AbstractEntity {
     private String name;
+    @ManyToMany(mappedBy = "divisions", cascade = CascadeType.ALL)
     private Set<Employee> employees;
-
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "city_id")
     private City city;
 
     public Division withId(Long id) {

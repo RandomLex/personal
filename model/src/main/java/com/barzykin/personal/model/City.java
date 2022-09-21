@@ -6,7 +6,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.Set;
 
 @Data
@@ -14,8 +16,11 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true, exclude = "divisions")
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class City extends AbstractEntity {
     private String name;
+
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
     private Set<Division> divisions;
 
     public City withId(Long id) {

@@ -6,6 +6,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,11 +27,19 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Employee extends AbstractEntity {
     private String name;
     private int age;
+    @OneToOne
     private Title title;
-    private Set<Division> divisions = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "department_employee",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "department_id")
+    )
+    private Set<Division> divisions;
     private int salary;
 
     public Employee withId(Long id) {

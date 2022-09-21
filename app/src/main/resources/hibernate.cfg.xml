@@ -14,10 +14,15 @@
         <property name="current_session_context_class">thread</property>
 <!--        <property name="show_sql">true</property>-->
 
-        <mapping resource="City.hbm.xml"/>
-        <mapping resource="Employee.hbm.xml"/>
-        <mapping resource="Title.hbm.xml"/>
-        <mapping resource="Division.hbm.xml"/>
+<!--        <mapping resource="City.hbm.xml"/>-->
+<!--        <mapping resource="Employee.hbm.xml"/>-->
+<!--        <mapping resource="Title.hbm.xml"/>-->
+<!--        <mapping resource="Division.hbm.xml"/>-->
+
+        <mapping class="com.barzykin.personal.model.City"/>
+        <mapping class="com.barzykin.personal.model.Division"/>
+        <mapping class="com.barzykin.personal.model.Employee"/>
+        <mapping class="com.barzykin.personal.model.Title"/>
 
 
     </session-factory>

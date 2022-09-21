@@ -1,13 +1,14 @@
 package com.barzykin.personal;
 
 import com.barzykin.personal.app.repositories.helpers.EntityManagerHelper;
+import com.barzykin.personal.dto.city.CityDto;
+import com.barzykin.personal.dto.city.DivisionDto;
 import com.barzykin.personal.model.City;
-import com.barzykin.personal.model.Employee;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.TypedQuery;
-import java.util.List;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 public class JpaExample {
     public static void main(String[] args) {
@@ -34,18 +35,24 @@ public class JpaExample {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
 
-//        City city = em.find(City.class, 3L);
-//        System.out.println("!!! " + city);
+        City city = em.find(City.class, 3L);
+        CityDto cityDto = CityDto.builder()
+                .name(city.getName())
+                .divisions(new HashSet<>(city.getDivisions().stream()
+                        .map(division -> new DivisionDto(division.getName()))
+                        .collect(Collectors.toSet())))
+                .build();
+        System.out.println("!!! " + cityDto);
 
 //        Employee employee = em.find(Employee.class, 11L);
 //        System.out.println("!!! " + employee);
 //
-        TypedQuery<Employee> query = em.createQuery("from Employee ", Employee.class);
-        List<Employee> employees = query.getResultList();
-        System.out.println("---------");
-        for (Employee emp : employees) {
-            System.out.println(emp);
-        }
+//        TypedQuery<Employee> query = em.createQuery("from Employee ", Employee.class);
+//        List<Employee> employees = query.getResultList();
+//        System.out.println("---------");
+//        for (Employee emp : employees) {
+//            System.out.println(emp);
+//        }
 
 
         tx.commit();

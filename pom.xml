@@ -10,6 +10,7 @@
     <modules>
         <module>app</module>
         <module>model</module>
+        <module>dto</module>
     </modules>
 
     <packaging>pom</packaging>

@@ -1,5 +1,6 @@
 package com.barzykin.personal;
 
+import com.barzykin.demo.Car;
 import com.barzykin.personal.app.repositories.helpers.EntityManagerHelper;
 import com.barzykin.personal.dto.city.CityDto;
 import com.barzykin.personal.dto.city.DivisionDto;
@@ -7,6 +8,10 @@ import com.barzykin.personal.model.City;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.TypedQuery;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
@@ -35,14 +40,45 @@ public class JpaExample {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
 
-        City city = em.find(City.class, 3L);
-        CityDto cityDto = CityDto.builder()
-                .name(city.getName())
-                .divisions(new HashSet<>(city.getDivisions().stream()
-                        .map(division -> new DivisionDto(division.getName()))
-                        .collect(Collectors.toSet())))
-                .build();
-        System.out.println("!!! " + cityDto);
+// ******* Конвертация java.sql.Date в java.util.Date при помощи @Temporal(TemporalType.DATE)
+
+// вставка новых строка в таблицу.
+// Создаём объекты, которые планируем вставить
+//        Car bmw = new Car();
+//        bmw.setModel("BMW");
+//        bmw.setReleaseDate(new Date(2015, 7, 15));
+//
+//        Car lada = new Car();
+//        lada.setModel("Lada");
+//        lada.setReleaseDate(new Date(2020, 9, 3));
+//// При помощи метода persist делаем сохранение строк (вставку) в базу данных.
+//        em.persist(bmw);
+//        em.persist(lada);
+
+//// Чтение из базы данных (select), если мы знаем идентификатор (id)
+//        Car bmw = em.find(Car.class, 1L);
+//        Car lada = em.find(Car.class, 2L);
+
+
+// Чтение из базы данных (select), если мы знаем значение какого-то поля, в данном случае model
+        TypedQuery<Car> queryBmw = em.createQuery("select car from Car car where car.model='BMW'", Car.class);
+        Car bmw = queryBmw.getSingleResult();
+        System.out.println(bmw);
+
+// Обновляем значение даты у BMW и сохраняем результат в базу (update)
+        bmw.setReleaseDate(Date.from(LocalDate.of(2015, 7, 15).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        Car updatedBMW = em.merge(bmw);
+        System.out.println(bmw);
+
+
+//        City city = em.find(City.class, 3L);
+//        CityDto cityDto = CityDto.builder()
+//                .name(city.getName())
+//                .divisions(new HashSet<>(city.getDivisions().stream()
+//                        .map(division -> new DivisionDto(division.getName()))
+//                        .collect(Collectors.toSet())))
+//                .build();
+//        System.out.println("!!! " + cityDto);
 
 //        Employee employee = em.find(Employee.class, 11L);
 //        System.out.println("!!! " + employee);

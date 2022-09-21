@@ -19,10 +19,12 @@
 <!--        <mapping resource="Title.hbm.xml"/>-->
 <!--        <mapping resource="Division.hbm.xml"/>-->
 
-        <mapping class="com.barzykin.personal.model.City"/>
-        <mapping class="com.barzykin.personal.model.Division"/>
-        <mapping class="com.barzykin.personal.model.Employee"/>
-        <mapping class="com.barzykin.personal.model.Title"/>
+<!--        <mapping class="com.barzykin.personal.model.City"/>-->
+<!--        <mapping class="com.barzykin.personal.model.Division"/>-->
+<!--        <mapping class="com.barzykin.personal.model.Employee"/>-->
+<!--        <mapping class="com.barzykin.personal.model.Title"/>-->
+
+        <mapping class="com.barzykin.demo.Car"/>
 
 
     </session-factory>

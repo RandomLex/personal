@@ -30,5 +30,7 @@
         <mapping class="com.barzykin.demo.hierarchy.table.Fish"/>
 
 
+        <mapping class="com.barzykin.demo.complexid.Emp"/>
+
     </session-factory>
 </hibernate-configuration>

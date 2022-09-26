@@ -32,5 +32,8 @@
 
         <mapping class="com.barzykin.demo.complexid.Emp"/>
 
+        <mapping class="com.barzykin.demo.hqljoin.ProductType"/>
+        <mapping class="com.barzykin.demo.hqljoin.Product"/>
+
     </session-factory>
 </hibernate-configuration>

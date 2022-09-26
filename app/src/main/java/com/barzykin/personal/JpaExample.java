@@ -1,11 +1,13 @@
 package com.barzykin.personal;
 
 import com.barzykin.demo.Car;
+import com.barzykin.demo.CarDto;
 import com.barzykin.demo.complexid.Emp;
 import com.barzykin.demo.complexid.EmpId;
 import com.barzykin.demo.hierarchy.table.Animal;
 import com.barzykin.demo.hierarchy.table.Bird;
 import com.barzykin.demo.hierarchy.table.Fish;
+import com.barzykin.demo.hqljoin.ProductType;
 import com.barzykin.personal.app.repositories.helpers.EntityManagerHelper;
 
 import javax.persistence.EntityManager;
@@ -80,13 +82,69 @@ public class JpaExample {
 //
 //        em.persist(reno);
 
-//// Чтение Рено
-//        TypedQuery<Car> queryReno = em.createQuery("select car from Car car where car.model='Reno'", Car.class);
+// Чтение Рено
+//        TypedQuery<Car> queryReno = em.createQuery("select car from Car car where car.model='BMW'", Car.class);
 //        Car reno = queryReno.getSingleResult();
 //        System.out.println(reno);
-//
+
 //// Удаление заранее прочитанного Рено
 //        em.remove(reno);
+
+// Чтение Car с заданным Id и возвратом названия автомобиля
+
+//        TypedQuery<String> query = em.createQuery("select car.model from Car car where id = 2", String.class);
+//        String model = query.getSingleResult();
+//        System.out.println(model);
+
+
+// Чтение названия автомобиля и даты выпуска в специализированный класс CarDto, имеющий поля name и date
+
+//        TypedQuery<CarDto> query = em.createQuery("select new com.barzykin.demo.CarDto(car.model, car.releaseDate) from Car car where id = 1", CarDto.class);
+//        CarDto carDto = query.getSingleResult();
+//        System.out.println(carDto);
+
+
+// ************************ Запросы к нескольким связанным таблицам
+//        create table product (
+//                id bigserial not null,
+//                name varchar(20) not null,
+//                price int not null,
+//                product_id int8 null
+//);
+//
+//        alter table product rename column product_id to product_type_id;
+//
+//        insert into product_type (name) values
+//                ('Computer'),
+//                ('Smartphone');
+//
+//        select * from product_type;
+//
+//        insert into product (name, price, product_type_id) values
+//                ('Iphone', 1200, 2),
+//                ('Xiaomi', 800, 2),
+//        ('Samsung', 1100, 2),
+//        ('HP', 2500, 1),
+//        ('Asus', 2300, 1),
+//        ('Xiaomi', 1150, 1)
+//        ;
+
+//        TypedQuery<ProductType> productTypes = em.createQuery("select pt from ProductType pt", ProductType.class);
+//        productTypes.getResultList().forEach(System.out::println);
+
+//        Возникает N + 1 проблема
+//        JPA вызывает запросы
+//           -- 1 -- на таблицу product_type
+//             -- N -- на таблицу product, подставляя в product_type_id id из каждой строки, вернувшейся из перво
+
+//        select * from product_type
+//        select * from product where product_type_id = 1;
+//        select * from product where product_type_id = 2;
+
+//      Способ избавится от лишних N запросов:
+//      Неявны (implicit) join
+        TypedQuery<ProductType> productTypes = em.createQuery("select p.productType from Product p ", ProductType.class);
+        productTypes.getResultList().forEach(System.out::println);
 
 
 // Создание объекта со составным первичным ключом (идентификатором)
@@ -97,15 +155,21 @@ public class JpaExample {
 //        );
 //        alter table emp add primary key (lastname, name);
 
-        Emp ivanIvanov = Emp.builder()
-                .empId(EmpId.builder()
-                        .lastname("Ivanov")
-                        .name("Ivan")
-                        .build())
-                .salary(1000)
-                .build();
+//        Emp ivanIvanov = Emp.builder()
+//                .empId(EmpId.builder()
+//                        .lastname("Ivanov")
+//                        .name("Ivan")
+//                        .build())
+//                .salary(1000)
+//                .build();
+//
+//        em.persist(ivanIvanov);
 
-        em.persist(ivanIvanov);
+//        Emp ivan = em.find(Emp.class, EmpId.builder()
+//                .lastname("Ivanov")
+//                .name("Ivan")
+//                .build());
+//        System.out.println(ivan);
 
 
 

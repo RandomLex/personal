@@ -1,21 +1,13 @@
 package com.barzykin.personal;
 
-import com.barzykin.demo.Car;
-import com.barzykin.demo.CarDto;
-import com.barzykin.demo.complexid.Emp;
-import com.barzykin.demo.complexid.EmpId;
-import com.barzykin.demo.hierarchy.table.Animal;
-import com.barzykin.demo.hierarchy.table.Bird;
-import com.barzykin.demo.hierarchy.table.Fish;
-import com.barzykin.demo.hqljoin.ProductType;
+import com.barzykin.demo.hqljoin.ProductDto;
 import com.barzykin.personal.app.repositories.helpers.EntityManagerHelper;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
 
 public class JpaExample {
@@ -157,13 +149,44 @@ public class JpaExample {
         //и будет использоваться в любом запросе из любой части кода
         //А fetch можно вставить именно в тот запрос, где действительно нужно вытащить все необходимые данные,
         //а другие запросы продолжат работать не вытаскивая ненужные им данные из базы.
-        TypedQuery<ProductType> productTypes = em.createQuery("select distinct pt from ProductType pt join fetch pt.products p where p.price > 1150", ProductType.class);
-        for (ProductType productType : productTypes.getResultList()) {
-            System.out.println(productType);
+//        TypedQuery<ProductType> productTypes = em.createQuery("select distinct pt from ProductType pt join fetch pt.products p where p.price > 1150", ProductType.class);
+//        for (ProductType productType : productTypes.getResultList()) {
+//            System.out.println(productType);
+//        }
+
+
+//        //Пусть мы хотим вытащить только имена продуктов дороже 1150 долларов
+//        TypedQuery<String> products = em.createQuery("select p.name from Product p where p.price > 1150", String.class);
+//        for (String productName : products.getResultList()) {
+//            System.out.println(productName);
+//        }
+
+        //Пусть мы хотим вытащить имена и цены продуктов дороже 1150 долларов
+        // Для простой печати полей или неизвестных атрибутов разных классов
+        //можно использовать нетипизированный запрос Query, который вернёт нам значения
+        //в виде массивов объектов Object[]. Однако такой способ не очень удобен
+//        Query query = em.createQuery("select p.name, p.price from Product p where p.price > 1150");
+//        List<Object> resultList = query.getResultList();
+//        for (Object product : resultList) {
+//            for (int i = 0; i < ((Object[]) product).length; i += ((Object[]) product).length) {
+//                System.out.println(((Object[]) product)[i] + ": " + ((Object[]) product)[i + 1]);
+//            }
+//        }
+
+//        //или преобразуя это через StreamAPI
+//        Query query = em.createQuery("select p.name, p.price from Product p where p.price > 1150");
+//        List<Object> resultList = query.getResultList();
+//        resultList.stream()
+//                .flatMap(element -> Arrays.stream((Object[]) element))
+//                .forEach(System.out::println);
+
+
+        //Более удобно доставать несколько полей перекладывая их автоматически в некие дополнительные классы,
+        //которые получили название Data Transfer Objects -- DTO
+        TypedQuery<ProductDto> productDtos = em.createQuery("select new com.barzykin.demo.hqljoin.ProductDto(p.name, p.price) from Product p where p.price > 1150", ProductDto.class);
+        for (ProductDto productDto : productDtos.getResultList()) {
+            System.out.println(productDto);
         }
-
-
-
 
 // Создание объекта со составным первичным ключом (идентификатором)
 //        create table emp (
@@ -188,7 +211,6 @@ public class JpaExample {
 //                .name("Ivan")
 //                .build());
 //        System.out.println(ivan);
-
 
 
 // ***************** Иерархии классов

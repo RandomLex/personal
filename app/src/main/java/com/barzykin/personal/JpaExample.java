@@ -142,17 +142,27 @@ public class JpaExample {
 //        select * from product where product_type_id = 2;
 
 
+//      Неявный (implicit) join
+//        TypedQuery<ProductType> productTypes = em.createQuery("select distinct p.productType from Product p ", ProductType.class);
+//        productTypes.getResultList().forEach(System.out::println);
 
-        //Явный (explicit) join
-        TypedQuery<ProductType> productTypes = em.createQuery("select distinct pt from ProductType pt join pt.products", ProductType.class);
+//        //Явный (explicit) join
+//        TypedQuery<ProductType> productTypes = em.createQuery("select distinct pt from ProductType pt join pt.products", ProductType.class);
+//        for (ProductType productType : productTypes.getResultList()) {
+//            System.out.println(productType);
+//        }
+
+        //Явный (explicit) join-fetch
+        //Добавление слова fetch лучше, чем использование Fetch.EAGER, потому, что Fetch.EAGER находится в классе Entity
+        //и будет использоваться в любом запросе из любой части кода
+        //А fetch можно вставить именно в тот запрос, где действительно нужно вытащить все необходимые данные,
+        //а другие запросы продолжат работать не вытаскивая ненужные им данные из базы.
+        TypedQuery<ProductType> productTypes = em.createQuery("select distinct pt from ProductType pt join fetch pt.products p where p.price > 1150", ProductType.class);
         for (ProductType productType : productTypes.getResultList()) {
             System.out.println(productType);
         }
 
 
-//      Неявный (implicit) join
-//        TypedQuery<ProductType> productTypes = em.createQuery("select distinct p.productType from Product p ", ProductType.class);
-//        productTypes.getResultList().forEach(System.out::println);
 
 
 // Создание объекта со составным первичным ключом (идентификатором)

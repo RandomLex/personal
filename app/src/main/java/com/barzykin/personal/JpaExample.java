@@ -1,15 +1,11 @@
 package com.barzykin.personal;
 
 import com.barzykin.demo.hqljoin.ProductDto;
-import com.barzykin.demo.hqljoin.ProductWithTypeDto;
 import com.barzykin.personal.app.repositories.helpers.EntityManagerHelper;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.Arrays;
-import java.util.List;
 
 public class JpaExample {
     public static void main(String[] args) {
@@ -189,11 +185,22 @@ public class JpaExample {
 //            System.out.println(productDto);
 //        }
 
-        //Пример запроса через Dto для join с фильтром по цене
-        TypedQuery<ProductWithTypeDto> query = em.createQuery("select distinct new com.barzykin.demo.hqljoin.ProductWithTypeDto(p.name, pt.name, p.price) from ProductType pt join pt.products p where p.price > 1150", ProductWithTypeDto.class);
-        for (ProductWithTypeDto withTypeDto : query.getResultList()) {
-            System.out.println(withTypeDto);
-        }
+//        //Пример запроса через Dto для join с фильтром по цене
+//        TypedQuery<ProductWithTypeDto> query = em.createQuery("select distinct new com.barzykin.demo.hqljoin.ProductWithTypeDto(p.name, pt.name, p.price) from ProductType pt join pt.products p where p.price > 1150", ProductWithTypeDto.class);
+//        for (ProductWithTypeDto withTypeDto : query.getResultList()) {
+//            System.out.println(withTypeDto);
+//        }
+
+        // До этого мы все фильтры в запросе указывали непосредственно в JPQL.
+        // Однако, в реальной жизни их значения фильтров передают в виде параметров
+//        TypedQuery<ProductDto> query = em.createQuery("select new com.barzykin.demo.hqljoin.ProductDto(p.name, p.price) from Product p where p.price > :priceGreaterThan", ProductDto.class);
+//        query.setParameter("priceGreaterThan", 1200);
+//        for (ProductDto productDto : query.getResultList()) {
+//            System.out.println(productDto);
+//        }
+
+
+
 
 // Создание объекта со составным первичным ключом (идентификатором)
 //        create table emp (

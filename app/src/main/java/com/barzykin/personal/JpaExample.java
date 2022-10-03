@@ -141,10 +141,17 @@ public class JpaExample {
 //        select * from product where product_type_id = 1;
 //        select * from product where product_type_id = 2;
 
-//      Способ избавится от лишних N запросов:
-//      Неявны (implicit) join
-        TypedQuery<ProductType> productTypes = em.createQuery("select p.productType from Product p ", ProductType.class);
+
+
+        //Явный (explicit) join
+        TypedQuery<ProductType> productTypes = em.createQuery("select distinct pt from ProductType pt join pt.products", ProductType.class);
         productTypes.getResultList().forEach(System.out::println);
+
+
+
+//      Неявный (implicit) join
+//        TypedQuery<ProductType> productTypes = em.createQuery("select distinct p.productType from Product p ", ProductType.class);
+//        productTypes.getResultList().forEach(System.out::println);
 
 
 // Создание объекта со составным первичным ключом (идентификатором)

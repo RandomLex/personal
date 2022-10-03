@@ -25,6 +25,7 @@ import javax.persistence.OneToMany;
 @Entity
 @NamedQuery(name = "byPriceGreaterThan", query = "select new com.barzykin.demo.hqljoin.ProductDto(p.name, p.price) from Product p where p.price > :priceGreaterThan")
 @NamedQuery(name = "byProductName", query = "select new com.barzykin.demo.hqljoin.ProductDto(p.name, p.price) from Product p where p.name = :name")
+@NamedQuery(name = "byNameAndPriceLessOrEqualsThan", query = "select new com.barzykin.demo.hqljoin.ProductDto(p.name, p.price) from Product p where p.name = :name and p.price <= :price")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

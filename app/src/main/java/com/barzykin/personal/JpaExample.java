@@ -206,9 +206,16 @@ public class JpaExample {
 //        query.getResultStream().forEach(System.out::println);
 
         //или поиск по имени
-        TypedQuery<ProductDto> query = em.createNamedQuery("byProductName", ProductDto.class);
+//        TypedQuery<ProductDto> query = em.createNamedQuery("byProductName", ProductDto.class);
+//        query.setParameter("name", "Xiaomi");
+//        query.getResultStream().forEach(System.out::println);
+
+        TypedQuery<ProductDto> query = em.createNamedQuery("byNameAndPriceLessOrEqualsThan", ProductDto.class);
         query.setParameter("name", "Xiaomi");
+        query.setParameter("price", 1149);
         query.getResultStream().forEach(System.out::println);
+
+
 
 
 // Создание объекта со составным первичным ключом (идентификатором)

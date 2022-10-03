@@ -145,8 +145,9 @@ public class JpaExample {
 
         //Явный (explicit) join
         TypedQuery<ProductType> productTypes = em.createQuery("select distinct pt from ProductType pt join pt.products", ProductType.class);
-        productTypes.getResultList().forEach(System.out::println);
-
+        for (ProductType productType : productTypes.getResultList()) {
+            System.out.println(productType);
+        }
 
 
 //      Неявный (implicit) join

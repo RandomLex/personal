@@ -199,7 +199,16 @@ public class JpaExample {
 //            System.out.println(productDto);
 //        }
 
+        //Наиболее часто встречающиеся запросы можно положить прямо в Entity (см. class Product)
+        //например, поиск по цене
+//        TypedQuery<ProductDto> query = em.createNamedQuery("byPriceGreaterThan", ProductDto.class);
+//        query.setParameter("priceGreaterThan", 1150);
+//        query.getResultStream().forEach(System.out::println);
 
+        //или поиск по имени
+        TypedQuery<ProductDto> query = em.createNamedQuery("byProductName", ProductDto.class);
+        query.setParameter("name", "Xiaomi");
+        query.getResultStream().forEach(System.out::println);
 
 
 // Создание объекта со составным первичным ключом (идентификатором)

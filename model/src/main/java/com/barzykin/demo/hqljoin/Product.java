@@ -15,12 +15,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 @Data
 @NoArgsConstructor
 @SuperBuilder
 @Entity
+@NamedQuery(name = "byPriceGreaterThan", query = "select new com.barzykin.demo.hqljoin.ProductDto(p.name, p.price) from Product p where p.price > :priceGreaterThan")
+@NamedQuery(name = "byProductName", query = "select new com.barzykin.demo.hqljoin.ProductDto(p.name, p.price) from Product p where p.name = :name")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

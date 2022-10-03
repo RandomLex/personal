@@ -1,5 +1,6 @@
 package com.barzykin.personal.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,6 +22,7 @@ public class City extends AbstractEntity {
     private String name;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
+    @JsonBackReference
     private Set<Division> divisions;
 
     public City withId(Long id) {

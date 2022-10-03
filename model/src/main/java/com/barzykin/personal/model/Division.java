@@ -1,5 +1,7 @@
 package com.barzykin.personal.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,8 +29,11 @@ public class Division extends AbstractEntity {
     private Set<Employee> employees;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "city_id")
+
+    @JsonManagedReference
     private City city;
 
+    @JsonBackReference
     public Division withId(Long id) {
         this.id = id;
         return this;

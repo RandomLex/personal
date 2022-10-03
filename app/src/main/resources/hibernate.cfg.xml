@@ -13,27 +13,28 @@
         <property name="hbm2ddl.auto">validate</property>
         <property name="current_session_context_class">thread</property>
         <property name="show_sql">true</property>
+        <property name="hibernate.enable_lazy_load_no_trans">true</property>
 
 <!--        <mapping resource="City.hbm.xml"/>-->
 <!--        <mapping resource="Employee.hbm.xml"/>-->
 <!--        <mapping resource="Title.hbm.xml"/>-->
 <!--        <mapping resource="Division.hbm.xml"/>-->
 
-<!--        <mapping class="com.barzykin.personal.model.City"/>-->
-<!--        <mapping class="com.barzykin.personal.model.Division"/>-->
-<!--        <mapping class="com.barzykin.personal.model.Employee"/>-->
-<!--        <mapping class="com.barzykin.personal.model.Title"/>-->
+        <mapping class="com.barzykin.personal.model.City"/>
+        <mapping class="com.barzykin.personal.model.Division"/>
+        <mapping class="com.barzykin.personal.model.Employee"/>
+        <mapping class="com.barzykin.personal.model.Title"/>
 
-        <mapping class="com.barzykin.demo.Car"/>
-        <mapping class="com.barzykin.demo.hierarchy.table.Animal"/>
-        <mapping class="com.barzykin.demo.hierarchy.table.Bird"/>
-        <mapping class="com.barzykin.demo.hierarchy.table.Fish"/>
+<!--        <mapping class="com.barzykin.demo.Car"/>-->
+<!--        <mapping class="com.barzykin.demo.hierarchy.table.Animal"/>-->
+<!--        <mapping class="com.barzykin.demo.hierarchy.table.Bird"/>-->
+<!--        <mapping class="com.barzykin.demo.hierarchy.table.Fish"/>-->
 
 
-        <mapping class="com.barzykin.demo.complexid.Emp"/>
+<!--        <mapping class="com.barzykin.demo.complexid.Emp"/>-->
 
-        <mapping class="com.barzykin.demo.hqljoin.ProductType"/>
-        <mapping class="com.barzykin.demo.hqljoin.Product"/>
+<!--        <mapping class="com.barzykin.demo.hqljoin.ProductType"/>-->
+<!--        <mapping class="com.barzykin.demo.hqljoin.Product"/>-->
 
     </session-factory>
 </hibernate-configuration>

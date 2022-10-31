@@ -2,6 +2,9 @@ package com.barzykin.personal.app.repositories;
 
 import com.barzykin.personal.app.repositories.helpers.EntityManagerHelper;
 import com.barzykin.personal.model.Employee;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -12,23 +15,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+@Component
 public class EmployeeRepositoryJpa implements EmployeeRepository {
-    private EntityManagerHelper helper = EntityManagerHelper.getInstance();
-    private static volatile EmployeeRepositoryJpa instance;
+    private final EntityManagerHelper helper;
 
-    private EmployeeRepositoryJpa() {
-        //singleton
-    }
-
-    public static EmployeeRepositoryJpa getInstance() {
-        if (instance == null) {
-            synchronized (EmployeeRepositoryJpa.class) {
-                if (instance == null) {
-                    instance = new EmployeeRepositoryJpa();
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    public EmployeeRepositoryJpa(EntityManagerHelper helper) {
+        this.helper = helper;
     }
 
     @Override

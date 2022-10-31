@@ -21,11 +21,16 @@ import static com.barzykin.personal.app.constants.DbConstants.ID;
 import static com.barzykin.personal.app.constants.HttpConstants.CONTENT_TYPE;
 import static com.barzykin.personal.app.constants.HttpConstants.ENCODING;
 
-@WebServlet("/api/employees")
-public class EmployeeRestController extends HttpServlet {
+@WebServlet(value = "/api/employees")
+public class EmployeeRestController extends AbstractController {
+    private EmployeeRepository employeeRepository;
 
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        employeeRepository = ctx.getBean("employeeRepositoryJpa", EmployeeRepository.class);
+    }
 
-    private EmployeeRepository employeeRepository = RepositoryFactory.getEmployeeRepository();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Object result;

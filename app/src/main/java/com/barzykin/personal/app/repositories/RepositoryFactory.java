@@ -49,8 +49,8 @@ public class RepositoryFactory {
                 return EmployeeRepositoryInMemory.getInstance();
             case POSTGRES:
                 return EmployeeRepositoryPostgres.getInstance(dataSource);
-            case JPA:
-                return EmployeeRepositoryJpa.getInstance();
+//            case JPA:
+//                return EmployeeRepositoryJpa.getInstance();
             default:
                 throw new ApplicationException("Property should be MEMORY or POSTGRES");
         }

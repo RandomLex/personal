@@ -36,15 +36,15 @@ public abstract class AbstractRepository<T extends AbstractEntity> implements Re
 
     @Override
     public List<T> findAll() {
-        Map<Long, T> employeeMap;
+        Map<Long, T> entityMap;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement ps = connection.prepareStatement(selectAllRows());
              ResultSet rs = ps.executeQuery()) {
-            employeeMap = resultSetToModel(rs);
+            entityMap = resultSetToModel(rs);
         } catch (SQLException e) {
             throw new ApplicationException(e);
         }
-        return new ArrayList<>(employeeMap.values());
+        return new ArrayList<>(entityMap.values());
     }
 
 

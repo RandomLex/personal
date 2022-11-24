@@ -1,5 +1,6 @@
 package com.barzykin.personal.app.repositories;
 
+import com.barzykin.demo.complexid.Emp;
 import com.barzykin.personal.app.repositories.helpers.EntityManagerHelper;
 import com.barzykin.personal.model.Employee;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,6 @@ public class EmployeeRepositoryJpa implements EmployeeRepository {
             em = helper.getEntityManager();
             em.getTransaction().begin();
 
-
             TypedQuery<Employee> query = em.createQuery("from Employee", Employee.class);
             employees = query.getResultList();
 
@@ -61,7 +61,21 @@ public class EmployeeRepositoryJpa implements EmployeeRepository {
 
     @Override
     public Optional<Employee> find(long id) {
-        return Optional.empty();
+        EntityManager em = null;
+        Optional<Employee> employeeOpt = Optional.empty();
+        try {
+            em = helper.getEntityManager();
+            em.getTransaction().begin();
+
+            employeeOpt = Optional.ofNullable(em.find(Employee.class, id));
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            safeRollback(em);
+        } finally {
+            safeClose(em);
+        }
+        return employeeOpt;
     }
 
     @Override
@@ -71,11 +85,48 @@ public class EmployeeRepositoryJpa implements EmployeeRepository {
 
     @Override
     public Employee save(Employee employee) {
-        return null;
+        EntityManager em = null;
+        try {
+            em = helper.getEntityManager();
+            em.getTransaction().begin();
+
+            if (employee.getId() == null) {
+                em.persist(employee);
+            } else {
+                em.merge(employee);
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            safeRollback(em);
+        } finally {
+            safeClose(em);
+        }
+        return employee;
     }
 
     @Override
     public Optional<Employee> remove(long id) {
-        return Optional.empty();
+        EntityManager em = null;
+        Optional<Employee> employeeOpt = Optional.empty();
+        try {
+            em = helper.getEntityManager();
+            em.getTransaction().begin();
+
+            Employee employee = em.find(Employee.class, id);
+            if (employee != null) {
+                em.remove(employee);
+                employeeOpt = Optional.of(employee);
+            } else {
+                employeeOpt = Optional.empty();
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            safeRollback(em);
+        } finally {
+            safeClose(em);
+        }
+        return employeeOpt;
     }
 }

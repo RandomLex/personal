@@ -2,6 +2,7 @@ package com.barzykin.personal.app.controllers;
 
 import com.barzykin.personal.app.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,7 +12,7 @@ public class EmployeeController  {
     private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public EmployeeController(EmployeeRepository employeeRepository) {
+    public EmployeeController(@Qualifier("employeeRepositoryOrm") EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
 

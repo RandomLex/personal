@@ -1,7 +1,6 @@
 package com.barzykin.personal.app.aop;
 
 import com.barzykin.personal.app.repositories.helpers.EntityManagerHelper;
-import com.barzykin.personal.model.Employee;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -10,9 +9,6 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.List;
 
 @Aspect
 @Component

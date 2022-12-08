@@ -1,31 +1,32 @@
 package com.barzykin.personal.app.controllers;
 
 import com.barzykin.personal.app.repositories.EmployeeRepository;
+import com.barzykin.personal.app.repositories.EmployeeRepositoryData;
 import com.barzykin.personal.model.Employee;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(produces = "application/json")
 @Slf4j
+@RequiredArgsConstructor
 public class EmployeeRestController {
 //    private static final Logger log = LoggerFactory.getLogger(EmployeeRestController.class);
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeRepositoryData employeeRepository;
 
-    public EmployeeRestController(@Qualifier("employeeRepositoryOrm") EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
-    }
+//    public EmployeeRestController(@Qualifier("employeeRepositoryData") EmployeeRepository employeeRepository) {
+//        this.employeeRepository = employeeRepository;
+//    }
 
 
     @GetMapping("/api/employees")
@@ -38,13 +39,32 @@ public class EmployeeRestController {
 
     @GetMapping("/api/employees/{id}")
     public ResponseEntity<Employee> getEmployee(@PathVariable Long id) {
-        return ResponseEntity.of(employeeRepository.find(id));
+        return ResponseEntity.of(employeeRepository.findById(id));
     }
 
 
     @PostMapping("/api/employees")
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
          return ResponseEntity.ok(employeeRepository.save(employee));
+    }
+
+    @SneakyThrows
+    @GetMapping("/api/employees-by-name/{name}")
+    public List<Employee> getEmployeeByName(@PathVariable String name) {
+        String decodedName = URLDecoder.decode(name, "UTF-8");
+        return employeeRepository.findByName(decodedName);
+    }
+
+    @SneakyThrows
+    @GetMapping(value = "/api/employees", params = {"from", "to"})
+    public List<Employee> getEmployeeBetweenAges(@RequestParam int from, @RequestParam int to) {
+        return employeeRepository.findAllByAgeBetween(from, to);
+    }
+
+    @SneakyThrows
+    @GetMapping(value = "/api/employees", params = {"salary>"})
+    public List<Employee> getEmployeeSalaryBiggerThan(@RequestParam(name = "salary>") int salary) {
+        return employeeRepository.findAllBySalaryIsGreaterThan(salary);
     }
 
     @PutMapping("/api/employees/{id}")
@@ -57,7 +77,14 @@ public class EmployeeRestController {
 
     @DeleteMapping("/api/employees/{id}")
     public ResponseEntity<Employee> deleteEmployee(@PathVariable Long id) {
-        return ResponseEntity.of(employeeRepository.remove(id));
+        Optional<Employee> employeeOpt = employeeRepository.findById(id);
+        if (employeeOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            Employee employee = employeeOpt.get();
+            employeeRepository.delete(employee);
+            return ResponseEntity.ok(employee);
+        }
     }
 
 }

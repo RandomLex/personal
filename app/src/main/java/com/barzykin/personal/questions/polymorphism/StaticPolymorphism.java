@@ -9,14 +9,14 @@ class StaticPolymorphism {
         String bStr = "Java!";
 
         System.out.println(plus(aInt, bInt));
-        System.out.println(plus(aStr, bStr));
+        System.out.println(plus(aInt, bStr));
     }
 
     static int plus(int a, int b) {
         return a + b;
     }
 
-    static String plus(String a, String b) {
+    static String plus(int a, String b) {
         return a + b;
     }
 
